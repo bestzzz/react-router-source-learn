@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>Page Title</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body>
+  <div id="root"></div>
+  <button onclick="push('/a')">/a</button>
+  <button onclick="push('/b')">/b</button>
+  <button onclick="push('/c')">/c</button>
+</body>
+</html>
+<script>
+  const container = document.getElementById('root');
+  // 监听弹出状态的事件
+  window.onpopstate = function(e) {
+    console.log(e);
+    container.innerHTML = e.state && e.state.to;
+  };
+
+  window.onpushstate = function(state, title, url) {
+    container.innerHTML = state.to || url;
+  }
+  
+  const oldPush = window.history.pushState;
+  window.history.pushState = function(state, title, url) {
+    oldPush.call(window.history, state, title, url);
+    window.onpushstate(state, title, url);
+  };
+
+  function push (to) {
+    window.history.pushState({to}, null, to);
+  }
+</script>
